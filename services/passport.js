@@ -15,34 +15,29 @@ passport.use(new GoogleStrategy({
     clientSecret: keys.googleClientSecret,
     callbackURL: '/auth/google/callback',
     proxy: true
-}, function (accessToken, refreshToken, profile, done) {
+}, async function (accessToken, refreshToken, profile, done) {
     // This callback function is called, when all of the passport authentication staffs done. We can save the user in db rom here.
 
     // console.log(accessToken);
     // console.log(profile);
 
     // Check the user already exists or not
-    UserModel.findOne({ googleId: profile.id })
-        .then(function (existingUser) {
-            if (existingUser) {
-                // We already have an record with existing googleId
-                // After successful operation, we have to call done(). done() accepts two arguments. done(errorObject, successDataObject). done() will explicitly tell passport that, we just finished our authentication flow. Though passport is nothing but an middleware,so it will grab the value from done-successObject or errObject and pass it to next middleware.
+    const existingUser = await UserModel.findOne({ googleId: profile.id });
+    
+    if (existingUser) {
+        // We already have an record with existing googleId
+        // After successful operation, we have to call done(). done() accepts two arguments. done(errorObject, successDataObject). done() will explicitly tell passport that, we just finished our authentication flow. Though passport is nothing but an middleware,so it will grab the value from done-successObject or errObject and pass it to next middleware.
 
-                //Though we are not passing erroObj, so the first argument is given as null.
-                done(null, existingUser);
-            } else {
-                // We will save the user's googleId to database
-                const newUser = new UserModel({
-                    googleId: profile.id
-                });
+        //Though we are not passing erroObj, so the first argument is given as null.
+        done(null, existingUser);
+    } else {
+        // We will save the user's googleId to database
+        const newUser = await new UserModel({
+            googleId: profile.id
+        }).save();
 
-                newUser
-                    .save()
-                    .then(function (user) {
-                        done(null, user);
-                    });
-            }
-        });
+        done(null, user);
+    }
 
 }));
 
@@ -61,3 +56,17 @@ passport.deserializeUser(function (id, done) {
         });
 });
 // We donot have to do any of module.exports here. We just have to execute this file.
+
+
+
+// More cleaner googleStrategy callback function
+// async function (accessToken, refreshToken, profile, done) {
+//     const existingUser = await UserModel.findOne({ googleId: profile.id });
+    
+//     if (existingUser) {
+//         return done(null, existingUser);
+//     }
+    
+//     const newUser = await new UserModel({ googleId: profile.id }).save();
+//     done(null, user);
+// }

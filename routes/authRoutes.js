@@ -8,12 +8,25 @@ module.exports = function (app) {
 
     // Google generates the code like- localhost:5000/auth/google/callback?code=4mafG45... Now we have to send GET request back with '/auth/google/callback' to google server, to verify the code. Note that, we donot have to sent that code explicitly to google server like - localhost:5000/auth/google/callback?code=4mafG45. It is managed automatically by passport. Passport automatically send the code along with this url '/auth/google/callback'. This is all done by the route handler 'passport.authenticate('google')' passed in app.get('...', passport.authenticate('google')).
 
-    // For more - see video 3.25 - Oauth callback
-    app.get('/auth/google/callback', passport.authenticate('google'));
+    // For more - see video 3.25 - Oauth callback. From this step, Frontend will get controll.
+    // After the user comes back from the oAuth flow(i.e /auth/google/callback), "passport.authenticate('google')" middlware takes the control over here. Then it pass the user "request (i.e req)" to the next middleware (i.e "function (req, res) { res.redirect('/surveys'); }") of this chain.
+    app.get(
+        // user comes back from the oAuth flow
+        '/auth/google/callback',
+        // After the user comes back from the oAuth flow, This middleware is finalizing the authentication
+        passport.authenticate('google'),
+        // We have to set it, after finishing the react frontend setup
+        // When all the authentication stuffs done, this middleware kicks in. It will render the surveys/dashboard page/component
+        function (req, res) { res.redirect('/surveys'); }
+    );
 
     app.get('/api/logout', function (req, res) {
         req.logout(); // this logout is passport's method attacher while authentication
-        res.send({ logoutMessage: 'You have successfully logged out' });
+        // res.send({ logoutMessage: 'You have successfully logged out' });
+
+        // After logging out, it will redirect to 'localhost:3000/'.
+        // Important note- If we use ajax logout, this will not work. Because Ajax renders a part of HTML component, while direct logout() http request renders a whole page. 
+        res.redirect('/');
     });
 
     // testing user request which comes after Oauth part
