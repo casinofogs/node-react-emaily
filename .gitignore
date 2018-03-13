@@ -1,4 +1,5 @@
 node_modules/
 course-resources/
 playground/
+.vscode/
 devKeys.js

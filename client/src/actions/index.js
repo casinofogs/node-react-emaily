@@ -57,7 +57,7 @@ export const fetchUser = () => async (dispatch) => {
     // *** From - https://medium.com/@gethylgeorge/understanding-how-redux-thunk-works-72de3bdebc50 . See+read the "Understanding the middleware and thunk" section.
     // dispatch() generally called from redux-store by "store.dispatch()"
     // Here in this code, dispatch() is not being used directly from redux store(i.e. createStore()). Instead, it's used from redux-thunk. Redux thunk wraps it like --> dispatch = nextFunction(store.dispatch). Read the blog for more.
-    
+
     // Inside dispatch's argument object, we are giving "payload" property. It will be available to all reducers as "action.payload" when this "dispatch function" would get called. We used "action.payload" in "/client/src/reducers/authReducer.js"
     dispatch({ type: FETCH_USER, payload: res.data });
 };
@@ -96,3 +96,12 @@ export const fetchUser = () => async (dispatch) => {
 //         dispatch({ type: FETCH_USER, payload: res.data });
 //     };
 // };
+
+
+
+export const handleToken = (token) => async dispatch => {
+
+    // This token object will be available in NODE backend as, req.body
+    const res = await axios.post('/api/stripe', token);
+    dispatch({ type: FETCH_USER, payload: res.data });
+};

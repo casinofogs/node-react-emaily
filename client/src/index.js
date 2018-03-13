@@ -11,7 +11,8 @@ import ReactDOM from 'react-dom';
 
 // Provider tag is a component that acts as bonding glue between react and redux. It's a higher order component. It can accept child component.
 import { Provider } from 'react-redux';
-// 
+
+// import "compose" from reduxx to use redux-devtools
 import { createStore, applyMiddleware } from 'redux';
 
 // Added during vid- 7.75
@@ -28,6 +29,11 @@ import reducers from './reducers';
 //  2nd argument - {} - This is widely used for serverside rendering. When development just starts, there is no initial state. So in that particular time, it's being setted to empty object.
 //  3rd argument - applyMiddleware() - middleWare or redux thunk. The details will be found in "client/src/actions/index.js"
 
+// For developement purpose
+// const middlewares = compose(applyMiddleware(reduxThunk), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+// const store = createStore(reducers, {}, middlewares);
+
+// Use That for production 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 
 // ReactDOM.render() function takes two arguments. 1st-root component, 2nd-where to put this component
@@ -41,3 +47,6 @@ ReactDOM.render(
     <Provider store={store}><App /></Provider>,
     document.querySelector('#root')
 );
+
+// console.log('Stripe key is ', process.env.REACT_APP_STRIPE_KEY);
+// console.log('Environment is ', process.env.NODE_ENV);

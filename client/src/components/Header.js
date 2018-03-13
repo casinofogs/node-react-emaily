@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Payments from './Payments';
 // To use actions for ajax logout
 // import * as actions from './../actions';
 
@@ -22,17 +23,18 @@ class Header extends Component {
 
             // case default -> Currently logged in
             default:
-                return (
-                    <li>
-                        <a href="/api/logout" className="">Log out</a>
-                        {/* <a onClick={this.props.logOutUser}>Log Out</a> */}
-                    </li>
-                );
+                return [
+                    <li key="1"><Payments /></li>,
+                    <li key="3" style={{ margin: '0 10px' }}>
+                        Credits: {this.props.auth.credits}
+                    </li>,
+                    <li key="2"><a href="/api/logout" className="">Log out</a></li>
+                ];
         }
     }
 
     render() {
-        // console.log(this.props.auth);
+        console.log(this.props.auth);
         return (
             <nav>
                 <div className="nav-wrapper">
@@ -55,7 +57,7 @@ class Header extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
+    // console.log(state);
     // This returned object will passed to the Header as "props"
     return {
         // The reducers we defined can be found from "src/recucers/index.js". There we defined "auth: authReducer". So that "auth" property will be available as "state.auth" in "state" object
